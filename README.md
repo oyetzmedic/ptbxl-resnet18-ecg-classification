@@ -1,4 +1,4 @@
-\# PTB-XL ResNet18 ECG Classification
+# PTB-XL ResNet18 ECG Classification
 
 
 
@@ -10,7 +10,7 @@ The project converts ECG signals into 224 x 224 log-spectrogram images, fine-tun
 
 
 
-\## Classes
+## Classes
 
 
 
@@ -18,15 +18,15 @@ The classifier predicts one of five PTB-XL diagnostic superclasses:
 
 
 
-\- `NORM` - Normal ECG
+- `NORM` - Normal ECG
 
-\- `MI` - Myocardial infarction
+- `MI` - Myocardial infarction
 
-\- `STTC` - ST/T change
+- `STTC` - ST/T change
 
-\- `CD` - Conduction disturbance
+- `CD` - Conduction disturbance
 
-\- `HYP` - Hypertrophy
+- `HYP` - Hypertrophy
 
 
 
@@ -34,7 +34,7 @@ Only records whose diagnostic codes resolve to exactly one diagnostic superclass
 
 
 
-\## Pipeline
+## Pipeline
 
 
 
@@ -58,19 +58,19 @@ Only records whose diagnostic codes resolve to exactly one diagnostic superclass
 
 
 
-\## Patient-disjoint split
+## Patient-disjoint split
 
 
 
-The project uses the official PTB-XL `strat\_fold` assignments:
+The project uses the official PTB-XL `strat_fold` assignments:
 
 
 
-\- Folds 1-8: training
+- Folds 1-8: training
 
-\- Fold 9: reserved validation fold
+- Fold 9: reserved validation fold
 
-\- Fold 10: test
+- Fold 10: test
 
 
 
@@ -82,35 +82,35 @@ The current training script reserves fold 9 but does not use it for early stoppi
 
 
 
-\## Model
+## Model
 
 
 
-\- Architecture: ResNet18
+- Architecture: ResNet18
 
-\- Initialisation: ImageNet pretrained weights
+- Initialisation: ImageNet pretrained weights
 
-\- Input: lead-II ECG log-spectrogram
+- Input: lead-II ECG log-spectrogram
 
-\- Input size: 224 x 224
+- Input size: 224 x 224
 
-\- Output classes: 5
+- Output classes: 5
 
-\- Loss: weighted cross-entropy
+- Loss: weighted cross-entropy
 
-\- Optimiser: AdamW
+- Optimiser: AdamW
 
-\- Default learning rate: `3e-4`
+- Default learning rate: `3e-4`
 
-\- Default epochs: `5`
+- Default epochs: `5`
 
-\- Default batch size: `64`
+- Default batch size: `64`
 
-\- Device: CUDA when available, otherwise CPU
+- Device: CUDA when available, otherwise CPU
 
 
 
-\## Archived experiment
+## Archived experiment
 
 
 
@@ -146,7 +146,7 @@ GPU: NVIDIA GeForce GTX 1050 Ti
 
 
 
-\### Test results
+### Test results
 
 
 
@@ -174,7 +174,7 @@ These results are from a five-epoch portfolio experiment rather than a clinicall
 
 
 
-\## Installation
+## Installation
 
 
 
@@ -194,11 +194,11 @@ pip install -r requirements.txt
 
 
 
-A complete environment snapshot is also retained in `requirements\_frozen.txt`.
+A complete environment snapshot is also retained in `requirements_frozen.txt`.
 
 
 
-\## Download PTB-XL
+## Download PTB-XL
 
 
 
@@ -208,7 +208,7 @@ Run:
 
 ```bash
 
-python download\_data.py
+python download_data.py
 
 ```
 
@@ -232,9 +232,9 @@ The expected structure includes:
 
 ```text
 
-ptbxl\_database.csv
+ptbxl_database.csv
 
-scp\_statements.csv
+scp_statements.csv
 
 records100/
 
@@ -250,7 +250,7 @@ PTB-XL is available from PhysioNet:
 
 
 
-\## Training
+## Training
 
 
 
@@ -284,9 +284,9 @@ The script writes:
 
 ```text
 
-finetune\_metrics.json
+finetune_metrics.json
 
-finetune\_resnet18\_state\_dict.pt
+finetune_resnet18_state_dict.pt
 
 ```
 
@@ -296,7 +296,7 @@ Model weight files are intentionally excluded from Git by `.gitignore`.
 
 
 
-\## Repository files
+## Repository files
 
 
 
@@ -304,25 +304,25 @@ Model weight files are intentionally excluded from Git by `.gitignore`.
 
 finetune.py              Training and evaluation pipeline
 
-ecg\_lib.py               ECG preprocessing, labels and split utilities
+ecg_lib.py               ECG preprocessing, labels and split utilities
 
-download\_data.py         PTB-XL download helper
+download_data.py         PTB-XL download helper
 
-finetune\_metrics.json    Archived test metrics
+finetune_metrics.json    Archived test metrics
 
 requirements.txt         Minimal pinned runtime dependencies
 
-requirements\_frozen.txt  Full archived Python environment
+requirements_frozen.txt  Full archived Python environment
 
 environment.txt          Recorded Python/PyTorch/CUDA environment
 
-RUN\_COMMAND.txt          Command used for the archived training run
+RUN_COMMAND.txt          Command used for the archived training run
 
 ```
 
 
 
-\## Reproducibility and data handling
+## Reproducibility and data handling
 
 
 
