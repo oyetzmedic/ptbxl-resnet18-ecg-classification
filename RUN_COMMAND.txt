@@ -1,0 +1,1 @@
+python finetune.py --data Z:\ --epochs 5 --batch 8

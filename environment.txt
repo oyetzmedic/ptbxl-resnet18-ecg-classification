@@ -1,0 +1,6 @@
+Python: 3.12.8 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:48:34) [MSC v.1929 64 bit (AMD64)]
+PyTorch: 2.6.0+cu124
+torchvision: 0.21.0+cu124
+CUDA runtime: 12.4
+CUDA available: True
+GPU: NVIDIA GeForce GTX 1050 Ti
