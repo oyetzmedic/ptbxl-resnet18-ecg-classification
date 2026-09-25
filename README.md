@@ -112,6 +112,19 @@ pip install -r requirements.txt
 
 A complete environment snapshot is also retained in `requirements_frozen.txt`.
 
+## Unit tests
+
+The eight tests in `test_ecg_lib.py` use synthetic signals and small metadata tables. They check filter response, heart-rate estimation, per-lead normalisation, the 57-feature output, label filtering, patient-overlap detection, fold assignments and spectrogram output.
+
+Install the test dependencies and run the suite from the repository root:
+
+```bash
+python -m pip install -r requirements-test.txt
+python -m pytest test_ecg_lib.py -q
+```
+
+The tests run without PTB-XL downloads, PyTorch or a GPU. They check utility behaviour on synthetic inputs, not model performance on real ECGs.
+
 ## Download PTB-XL
 
 Run:
@@ -190,9 +203,11 @@ baseline.py             CPU logistic-regression baseline
 baseline_metrics.json   Saved baseline test metrics
 finetune.py              ResNet18 training and evaluation pipeline
 ecg_lib.py               ECG preprocessing, labels and split utilities
+test_ecg_lib.py          Eight synthetic-data unit tests
 download_data.py         PTB-XL download helper
 finetune_metrics.json    Archived ResNet18 test metrics
 requirements.txt        Minimal pinned runtime dependencies
+requirements-test.txt   Pinned dependencies for the unit tests
 requirements_frozen.txt Full archived Python environment
 environment.txt         Recorded Python/PyTorch/CUDA environment
 RUN_COMMAND.txt         Command used for the archived training run
