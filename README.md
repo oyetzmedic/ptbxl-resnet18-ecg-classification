@@ -4,6 +4,8 @@ A reproducible deep-learning pipeline for classifying single-superclass PTB-XL E
 
 The project converts ECG signals into 224 x 224 log-spectrogram images, fine-tunes ResNet18 for five PTB-XL diagnostic superclasses, and evaluates performance using the official patient-disjoint PTB-XL stratified folds.
 
+A CPU logistic-regression baseline uses handcrafted features from all 12 leads. The saved results below compare both pipelines.
+
 ## Classes
 
 The classifier predicts one of five PTB-XL diagnostic superclasses:
@@ -16,7 +18,7 @@ The classifier predicts one of five PTB-XL diagnostic superclasses:
 
 Only records whose diagnostic codes resolve to exactly one diagnostic superclass are retained, so this repository implements a single-superclass classification task rather than multilabel classification.
 
-## Pipeline
+## ResNet18 pipeline
 
 1. Load PTB-XL metadata and 100 Hz waveform records.
 2. Map diagnostic SCP codes to PTB-XL diagnostic superclasses.
@@ -40,7 +42,7 @@ The code explicitly checks for patient overlap between partitions and raises an 
 
 The current training script reserves fold 9 but does not use it for early stopping or model selection.
 
-## Model
+## ResNet18 model
 
 - Architecture: ResNet18
 - Initialisation: ImageNet pretrained weights
@@ -54,7 +56,13 @@ The current training script reserves fold 9 but does not use it for early stoppi
 - Default batch size: `64`
 - Device: CUDA when available, otherwise CPU
 
-## Archived experiment
+## Classical baseline
+
+`baseline.py` applies the same band-pass filtering and per-lead z-normalisation before extracting 57 features: six lead-II rate and rhythm features, four statistical features from each of the 12 leads, and three lead-II spectral band powers.
+
+`StandardScaler` is fitted on the training features. Logistic regression uses balanced class weights, `max_iter=2000` and `random_state=42`. The baseline runs on CPU.
+
+## Archived ResNet18 experiment
 
 The archived run used:
 
@@ -72,19 +80,25 @@ CUDA runtime: 12.4
 GPU: NVIDIA GeForce GTX 1050 Ti
 ```
 
-### Test results
+## Test results and comparison
 
-| Metric | Result |
-| --- | ---: |
-| Accuracy | 0.6352 |
-| Macro F1 | 0.4565 |
-| NORM recall | 0.7884 |
-| MI recall | 0.3047 |
-| STTC recall | 0.5455 |
-| CD recall | 0.6250 |
-| HYP recall | 0.0714 |
+Values come from [baseline_metrics.json](baseline_metrics.json) and [finetune_metrics.json](finetune_metrics.json), rounded to four decimal places.
 
-These results are from a five-epoch portfolio experiment rather than a clinically validated model. Performance varies substantially by class, particularly for the minority HYP class.
+| Metric | Baseline | ResNet18 (5 epochs) |
+| --- | ---: | ---: |
+| Accuracy | 0.5448 | 0.6352 |
+| Macro F1 | 0.4665 | 0.4565 |
+| NORM recall | 0.5669 | 0.7884 |
+| MI recall | 0.4492 | 0.3047 |
+| STTC recall | 0.5165 | 0.5455 |
+| CD recall | 0.6033 | 0.6250 |
+| HYP recall | 0.5536 | 0.0714 |
+
+The baseline has higher macro F1 and higher MI and HYP recall. ResNet18 has higher accuracy and higher NORM, STTC and CD recall.
+
+Both scripts use the same label-filtering and fold-splitting utilities. The baseline uses features from all 12 leads, while ResNet18 uses lead-II spectrograms. This is a comparison of two pipelines with different inputs. The results do not isolate the effect of model architecture.
+
+The ResNet18 results come from a five-epoch portfolio experiment. The saved metrics contain no confidence intervals or repeated-run estimates. Neither pipeline has clinical validation.
 
 ## Installation
 
@@ -106,11 +120,13 @@ Run:
 python download_data.py
 ```
 
-The script uses WFDB to download the PTB-XL 100 Hz records and metadata into:
+The helper uses WFDB to download waveform records into:
 
 ```text
 ptbxl/
 ```
+
+It requests all available records, including 500 Hz recordings, and does not explicitly fetch the two metadata CSVs. Download `ptbxl_database.csv` and `scp_statements.csv` from the PhysioNet release page below into the same directory.
 
 The expected structure includes:
 
@@ -124,7 +140,27 @@ PTB-XL is available from PhysioNet:
 
 [PTB-XL v1.0.3 on PhysioNet](https://physionet.org/content/ptb-xl/1.0.3/)
 
-## Training
+## Running the models
+
+### CPU baseline
+
+With PTB-XL stored in `./ptbxl`:
+
+```bash
+python baseline.py --data ./ptbxl
+```
+
+For a Windows dataset stored at the root of drive Z:
+
+```powershell
+python baseline.py --data Z:/
+```
+
+`--data` points to the folder containing `ptbxl_database.csv`, `scp_statements.csv` and `records100/`.
+
+Each baseline run writes `baseline_metrics.json` in the current working directory, replacing an existing file with the same name.
+
+### ResNet18 training
 
 With PTB-XL stored in the default `./ptbxl` directory:
 
@@ -150,10 +186,12 @@ Model weight files are intentionally excluded from Git by `.gitignore`.
 ## Repository files
 
 ```text
-finetune.py              Training and evaluation pipeline
+baseline.py             CPU logistic-regression baseline
+baseline_metrics.json   Saved baseline test metrics
+finetune.py              ResNet18 training and evaluation pipeline
 ecg_lib.py               ECG preprocessing, labels and split utilities
 download_data.py         PTB-XL download helper
-finetune_metrics.json    Archived test metrics
+finetune_metrics.json    Archived ResNet18 test metrics
 requirements.txt        Minimal pinned runtime dependencies
 requirements_frozen.txt Full archived Python environment
 environment.txt         Recorded Python/PyTorch/CUDA environment
