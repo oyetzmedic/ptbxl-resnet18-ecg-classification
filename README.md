@@ -1,5 +1,7 @@
 # PTB-XL ResNet18 ECG Classification
 
+[![tests](https://github.com/oyetzmedic/ptbxl-resnet18-ecg-classification/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/oyetzmedic/ptbxl-resnet18-ecg-classification/actions/workflows/tests.yml)
+
 A reproducible deep-learning pipeline for classifying single-superclass PTB-XL ECG records using lead-II time-frequency representations and an ImageNet-pretrained ResNet18.
 
 The project converts ECG signals into 224 x 224 log-spectrogram images, fine-tunes ResNet18 for five PTB-XL diagnostic superclasses, and evaluates performance using the official patient-disjoint PTB-XL stratified folds.
@@ -113,6 +115,8 @@ pip install -r requirements.txt
 A complete environment snapshot is also retained in `requirements_frozen.txt`.
 
 ## Unit tests
+
+GitHub Actions runs this suite on every push and pull request using Python 3.12 and `requirements-test.txt`. The badge above shows the status of the latest run on `main`.
 
 The eight tests in `test_ecg_lib.py` use synthetic signals and small metadata tables. They check filter response, heart-rate estimation, per-lead normalisation, the 57-feature output, label filtering, patient-overlap detection, fold assignments and spectrogram output.
 
